@@ -1,48 +1,48 @@
-Script pour calculer le greenness index à partir des images pour le site de Crouzet
-# raster pour importer une image dans la fenêtre plot et travailler dessus
+Script pour calculer le greenness index Ã  partir des images 
+# raster pour importer une image dans la fenÃªtre plot et travailler dessus
 library(raster)
 # phenopix pour dessiner les polygones
 library(phenopix)
 library(lubridate)
-# ligne 9 à 22 pour dessiner le(s) polygone(s) sur image de reference et enregistrer les coordonnées de ces polygones
+# ligne 9 Ã  22 pour dessiner le(s) polygone(s) sur image de reference et enregistrer les coordonnÃ©es de ces polygones
 # utiliser des lignes de code une seule fois par site si la camera ne bouge pas trop
-# Definir path pour stocker les coordonnées des polygones que l'on va dessiner avec la fonction DrawMULTIROI
-DIR.ROI <- "D:/gestion datas/images/Crouzet/ROI/"
+# Definir path pour stocker les coordonnÃ©es des polygones que l'on va dessiner avec la fonction DrawMULTIROI
+DIR.ROI <- "DIR/images/Crouzet/ROI/"
 # importer le path de l'image de reference sur laquelle on souhaite dessiner le ROI
-# l'image du 15 juillet 2015 prise à 12h13 a été utilisé comme image de référence pour tracer les polygones
+# l'image du 15 juillet 2015 prise Ã  12h13 a Ã©tÃ© utilisÃ© comme image de rÃ©fÃ©rence pour tracer les polygones
 # pour site Crouzet
-IMG.REF <- "E:/Stage PNE/gestion datas/images/Crouzet/IMG/2015/Crouzet_2015-07-15_08-26-29.JPG"
+IMG.REF <- "~DIR/IMG/2015/Crouzet_2015-07-15_08-26-29.JPG"
 #Dessiner le ROI (package phenopix)
 # 1er argument de la fonction DrawMULTIROI : image de reference (IMG.REF)
-# 2e argument de la fonction DrawMULTIROI : où l'on souhaite enregistrer les coordonnées (DIR.ROI)
+# 2e argument de la fonction DrawMULTIROI : oÃ¹ l'on souhaite enregistrer les coordonnÃ©es (DIR.ROI)
 # 3e argument : nom du fichier
 DrawMULTIROI(IMG.REF, DIR.ROI,nroi = 1, "ROI1", file.type='.jpg')
 ## POUR DESSINER LE ROI
 # clic gauche avec le curseur sur la photo qui s'affiche dans "Plots"
-# pour dessiner le périmètre du polygone(ROI)
-# Une fois le premier ROI dessiné cliquer sur "finish" en haut à droite de la photo
-# si plusieurs ROI souhaités, taper n dans la console (pour no) à la question : la création de ROI est-elle finie ?
-# recommencer cette operation autant que de ROI souhaité
-# une fois qu'on a le nombre de ROI souhaité, taper y dans la console
-# Importer le fichier dans lequel se trouvent les cordonnées des ROI (fichier au format RData)
-load("E:/Stage PNE/gestion datas/images/ROI_crouzet/roi.data.Rdata")
+# pour dessiner le pÃ©rimÃ¨tre du polygone(ROI)
+# Une fois le premier ROI dessinÃ© cliquer sur "finish" en haut Ã  droite de la photo
+# si plusieurs ROI souhaitÃ©s, taper n dans la console (pour no) Ã  la question : la crÃ©ation de ROI est-elle finie ?
+# recommencer cette operation autant que de ROI souhaitÃ©
+# une fois qu'on a le nombre de ROI souhaitÃ©, taper y dans la console
+# Importer le fichier dans lequel se trouvent les cordonnÃ©es des ROI (fichier au format RData)
+load("DIR/images/ROI_crouzet/roi.data.Rdata")
 roi
-#lister des images pour une année sur le site de vallonpierre
+#lister des images pour une annÃ©e sur le site de vallonpierre
 ## ATTENTION A CHANGER LE PATH chaque fois qu'on change de dossier d'images
-allfiles <- list.files("E:/Stage PNE/gestion datas/images/Crouzet/IMG/2015", pattern=".JPG",full=T)
+allfiles <- list.files("DIR/images/Crouzet/IMG/2015", pattern=".JPG",full=T)
 length(allfiles)
-# fonction strsplit() sépare les caractères du nom du fichier
-# lapply: recupère le troisieme élément dans le nom du fichier
-# cette ligne recupere l'heure à laquelle la photo a été prise pour toutes les images de la liste allfiles
+# fonction strsplit() sÃ©pare les caractÃ¨res du nom du fichier
+# lapply: recupÃ¨re le troisieme Ã©lÃ©ment dans le nom du fichier
+# cette ligne recupere l'heure Ã  laquelle la photo a Ã©tÃ© prise pour toutes les images de la liste allfiles
 id.hour <- unlist(lapply(strsplit(allfiles ,"_"), function(x) x[3]))
 id.hour
 #enlever la terminaison .JPG de la partie recuperee
 id.hour <- gsub(".JPG","",id.hour)
 id.hour
-# dans le même principe : récupérer la date dans le nommage du fichier pour toutes les images de la liste allfiles
+# dans le mÃªme principe : rÃ©cupÃ©rer la date dans le nommage du fichier pour toutes les images de la liste allfiles
 id.Date <- unlist(lapply(strsplit(allfiles ,"_"), function(x) x[2]))
 id.Date
-# Coller la date et l'heure et les séparer par un espace
+# Coller la date et l'heure et les sÃ©parer par un espace
 DateTime <- paste(id.Date, id.hour,sep=" ")
 DateTime
 # Mettre l'objet avec la date et l'heure au format date
@@ -55,91 +55,91 @@ length(MIDI.id)
 Date.IMG <- as.data.frame.Date(DateTime[MIDI.id])
 Date.IMG
 # Selectionner les images entre avril et novembre dans la liste allfiles
-# Rappel : allfiles = toutes les images de l'année
+# Rappel : allfiles = toutes les images de l'annÃ©e
 IMG.id <- allfiles[MIDI.id]
 IMG.id
 # MG pour indice de vert des prairies
-# MT pour indice de vert des mélèzes
+# MT pour indice de vert des mÃ©lÃ¨zes
 103
 list.MG <- NULL
 list.MT <- NULL
 for (i in 1:length(IMG.id)){
-    # Verifier qu'il n'y a pas de message d'erreur à chaque fin d'iteration
-    # parfois un warning message peut s'afficher mais ne pas en tenir en compte car ne semble pas poser problème
+    # Verifier qu'il n'y a pas de message d'erreur Ã  chaque fin d'iteration
+    # parfois un warning message peut s'afficher mais ne pas en tenir en compte car ne semble pas poser problÃ¨me
     print (i)
     #importer l'image sous forme de raster (fonction stack() du package raster)
     IMG <- stack(IMG.id[i])
-    # Des qu'il y a 3 ### ça affiche la ligne de code précédente produit sur une image mais prends trop de temps quand on calcule toutes les images
+    # Des qu'il y a 3 ### Ã§a affiche la ligne de code prÃ©cÃ©dente produit sur une image mais prends trop de temps quand on calcule toutes les images
     ###plotRGB(IMG)
-    # faire la somme de la quantité de chaque couleur (rouge, bleue et vert)
-    # (p.39 présentation epheno)
+    # faire la somme de la quantitÃ© de chaque couleur (rouge, bleue et vert)
+    # (p.39 prÃ©sentation epheno)
     BR <- stackApply(IMG,rep(1,3),sum)
     ###plot(BR)
-    # Calculer la quantité relative de rouge, de bleue et de vert
-    # au denominateur : la quantitté total de couleur (BR)
-    # au numérateur : l'objet IMG récupére une quantité de couleur après l'autre
+    # Calculer la quantitÃ© relative de rouge, de bleue et de vert
+    # au denominateur : la quantittÃ© total de couleur (BR)
+    # au numÃ©rateur : l'objet IMG rÃ©cupÃ©re une quantitÃ© de couleur aprÃ¨s l'autre
     RGBi <- IMG/BR
     ### Afficher l'indice de brightness
     ###plot(RGBi)
-    # Calcul l'intensité du vert présent sur l'image en soustrayant le nombre digital du bleu et du rouge au vert
+    # Calcul l'intensitÃ© du vert prÃ©sent sur l'image en soustrayant le nombre digital du bleu et du rouge au vert
     # (RGBi,2): Canal vert
     # (RGBi,1): canal rouge
     # (RGBi,3): canal bleue
-    # equation 8 de Richardson (2007) simplifiée :
+    # equation 8 de Richardson (2007) simplifiÃ©e :
     # EXG <- (RGBi,2 - RGBi,1) + (RGBi,2 - RGBi,3)
-    # ca montre le changement d'état de la prairie dans sa phénologie (Richardson, 2007)
+    # ca montre le changement d'Ã©tat de la prairie dans sa phÃ©nologie (Richardson, 2007)
     EXG <- 2*raster(RGBi,2)-(raster(RGBi,1)+raster(RGBi,3))
     EXG
     ### zlim : ajuster la legende entre 0 et 2 et afficher
     ### plot(EXG,zlim=c(0,2))
-    ### superposition des ROI dessinées sur le plot
+    ### superposition des ROI dessinÃ©es sur le plot
     ### lines(myroi <- roi.data$ROI$polygons)
-    # mettre les coordonnées des polygones dessinés dans l'objet myroi
+    # mettre les coordonnÃ©es des polygones dessinÃ©s dans l'objet myroi
     myroi <- roi.data$ROI$polygons
-    # grâce aux ROI dessinées sur la photo de ref,
-    # on applique l'équation EXG (greenness index ou indice de vert) aux 1er, 2e et 3e polygones dessinés sur les prairies de la photo
+    # grÃ¢ce aux ROI dessinÃ©es sur la photo de ref,
+    # on applique l'Ã©quation EXG (greenness index ou indice de vert) aux 1er, 2e et 3e polygones dessinÃ©s sur les prairies de la photo
     # que l'on est en train de traiter
     masked_GRASS <- mask(x = EXG, mask = myroi[1:3])
-    # on applique l'équation EXG (greenness index ou indice de vert) aux 4e et 5e polygones dessinés sur les mélèzes de la photo
+    # on applique l'Ã©quation EXG (greenness index ou indice de vert) aux 4e et 5e polygones dessinÃ©s sur les mÃ©lÃ¨zes de la photo
     masked_TREE <- mask(x = EXG, mask = myroi[4:5])
     ### plot(masked_GRASS)
     ###plot(masked_TREE)
-    # calculer le greenness index moyen pour les prairies (utile si plusieurs polygones dessinés sur images de référence)
+    # calculer le greenness index moyen pour les prairies (utile si plusieurs polygones dessinÃ©s sur images de rÃ©fÃ©rence)
     MG <- round(mean(masked_GRASS[],na.rm=T),2)
     MG
-    # calculer le greenness index moyen pour les mélèzes
+    # calculer le greenness index moyen pour les mÃ©lÃ¨zes
     MT <- round(mean(masked_TREE[],na.rm=T),2)
     MT
-    # Mettre les moyennes calculees dans une liste respective à chaque fin d'iteration
+    # Mettre les moyennes calculees dans une liste respective Ã  chaque fin d'iteration
     list.MG[i] <- rbind(MG)
     list.MT[i] <- rbind(MT)
 }
-# verifier qu'il y a le même nombre de données que d'images traitées dans la boucle
+# verifier qu'il y a le mÃªme nombre de donnÃ©es que d'images traitÃ©es dans la boucle
 # Pour cela, verifier la longueur de l'objet IMG.id et celui de list.MG
 length(list.MG)
 length(list.MT)
 length(IMG.id)
-# objet avec la date, l'heure et l'indice de vert pour les prairies et les mélèzes
+# objet avec la date, l'heure et l'indice de vert pour les prairies et les mÃ©lÃ¨zes
 FINAL.file <- cbind(Date.IMG, list.MG, list.MT)
-# calculer le greenness index moyen par jour car il y a plusieurs images par jour qui ont été traité dans la boucle
+# calculer le greenness index moyen par jour car il y a plusieurs images par jour qui ont Ã©tÃ© traitÃ© dans la boucle
 MDT.G <- aggregate(FINAL.file$list.MG,list(DAY=date(FINAL.file$DateTime[MIDI.id])),mean)
 MDT.G$x <- round(MDT.G$x, 2)
 MDT.G
-# calculer le greenness index moyen par jour car il y a plusieurs images par jour qui ont été traité dans la boucle
+# calculer le greenness index moyen par jour car il y a plusieurs images par jour qui ont Ã©tÃ© traitÃ© dans la boucle
 MDT.T <- aggregate(FINAL.file$list.MT,list(DAY=date(FINAL.file$DateTime[MIDI.id])),mean)
 MDT.T$x <- round(MDT.T$x, 2)
 MDT.T
-#changer le nom des colonnes utile pour l'exportation des données dans un fichier csv
+#changer le nom des colonnes utile pour l'exportation des donnÃ©es dans un fichier csv
 colnames(FINAL.file)[2] <- "GREENNESS_GRASS"
 colnames(FINAL.file)[3] <- "GREENNESS_TREES"
-#path pour enregistrer les données
-DIR.END <- "D:/gestion datas/images/Crouzet/IMG/GREENNESS/all_data/"
-# selectionner la date de la première photo traitée en avril et de la dernière traitée en novembre
-# ATTENTION : Il arrive qu'il manque des données après le calcul de brigthness par jour ligne 161.
-# ça vient souvent de cette partie de la ligne : FINAL.file$DateTime[MIDI.id]
+#path pour enregistrer les donnÃ©es
+DIR.END <- "~DIR/images/Crouzet/IMG/GREENNESS/all_data/"
+# selectionner la date de la premiÃ¨re photo traitÃ©e en avril et de la derniÃ¨re traitÃ©e en novembre
+# ATTENTION : Il arrive qu'il manque des donnÃ©es aprÃ¨s le calcul de brigthness par jour ligne 161.
+# Ã§a vient souvent de cette partie de la ligne : FINAL.file$DateTime[MIDI.id]
 INITIAL <- FINAL.file[1,1]
 END <- FINAL.file[118,1]
 NAME.END <- paste0(DIR.END, "Crouzet_",INITIAL,"_",END,"_v1.csv")
 NAME.END
-# exporter les donnees de l'objet FINAL.file au format csv dans le dossier prévu à cet effet (l.180)
+# exporter les donnees de l'objet FINAL.file au format csv dans le dossier prÃ©vu Ã  cet effet (l.180)
 write.csv(FINAL.file,NAME.END,row.names=F)
